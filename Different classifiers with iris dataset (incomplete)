@@ -5,9 +5,7 @@ Goal: Use different classification models to classify a given iris sample
 Iris setosa, Iris virginica and Iris versicolor.
 There are number of models will be used:
 1- KNN1 and KNN5
-2- Linear SVC
-3- Decision Tree
-4- Random Forest'''
+2- Decision Tree'''
 
 # Import libraries
 import numpy as np
