@@ -1,3 +1,4 @@
+# I have not figured yet how to apply Standard Scalar and train_test_split methods. Still trying :)
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
