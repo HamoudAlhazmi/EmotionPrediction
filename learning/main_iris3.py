@@ -21,7 +21,7 @@ train_X, test_X, train_y, test_y = train_test_split(X, y,
     )
 
 # select classifier
-cls = KNeighborsClassifier()
+cls = KNeighborsClassifier(5)
 cls.fit(train_X, train_y)
 
 # predict the 'target' for 'test data'
