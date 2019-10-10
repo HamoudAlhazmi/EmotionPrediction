@@ -11,12 +11,12 @@ def make_meshgrid(x, y, h=.02):
     """Create a mesh of points to plot in
 
     Parameters
-    ----------
+
     x: data to base x-axis meshgrid on
     y: data to base y-axis meshgrid on
     h: stepsize for meshgrid, optional
     Returns
-    -------
+
     xx, yy : ndarray
     """
     x_min, x_max = x.min() - 1, x.max() + 1
