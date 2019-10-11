@@ -1,4 +1,6 @@
 # this code runs perfectly when i remove standard scalr and train_test_split but when i add them it gives me errors :( Still figuring them out tho.
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn import svm, datasets
@@ -6,6 +8,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from matplotlib.colors import ListedColormap
+
 
 def make_meshgrid(x, y, h=.02):
     """Create a mesh of points to plot in
@@ -28,16 +31,7 @@ def make_meshgrid(x, y, h=.02):
 
 
 def plot_contours(ax, clf, xx, yy, **params):
-    """Plot the decision boundaries for a classifier.
 
-    Parameters
-    ----------
-    ax: matplotlib axes object
-    clf: a classifier
-    xx: meshgrid ndarray
-    yy: meshgrid ndarray
-    params: dictionary of params to pass to contourf, optional
-    """
     Z = clf.predict(np.c_[xx.ravel(), yy.ravel()])
     Z = Z.reshape(xx.shape)
     out = ax.contourf(xx, yy, Z, **params)
