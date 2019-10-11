@@ -8,7 +8,6 @@ from bs4 import BeautifulSoup
 import re
 from nltk.tokenize import WordPunctTokenizer
 
-
 # First, columns names have been assigned to each column
 cols = ['sentiment','id','date','query_string','user','text']
 with open(r"C:\Users\Hamou\OneDrive\المستندات\Term 2 2019 uc\Engineering Project A - 10004\sentiment 140\training.1600000.processed.noemoticon.csv") as f: #r means the string will be treated as raw string
