@@ -40,10 +40,13 @@ The testing set will be the remaining set that assesses whether the model is abl
 I will be using a 105/45 split for train/test respectively. That is, we will be training our model on 70% of our data, and then testing on the remaining
 30%. A 105/45 split is a reasonable rule to use as a starting point.
 Split our dataset into training and testing sets.
+
 random_state takes the data we give it and the target we give it and it is going randomly split them up into a train_test_split. It is going to do that randomly everytime the program runs
 if we run the program with random_state equals to zero we are going to get the same exact components from this particular dataset in these variables set.
+
 test_size is set like this because the parameter defines the amount of data used in the test split. since the test_size is 0.3 then train_size will be 0.7
 When you’re working with a learning model, it is important to scale the features to a range which is centered around zero.
+
 This is done so that the variance of the features are in the same range.
 If a feature’s variance is orders of magnitude more than the variance of other features,
 that particular feature might dominate other features in the dataset, which is not something we want happening in our model. '''
