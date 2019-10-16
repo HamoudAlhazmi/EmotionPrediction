@@ -17,7 +17,8 @@ cv = CountVectorizer()
 word_count_vector = cv.fit_transform(docs)
 
 # Now, let’s check the shape. We should have 5 rows (5 docs) and 16 columns (16 unique words, minus single character words):
-print(word_count_vector.shape)
+print(word_count_vector)
+exit
 
 # If smooth_idf=True (the default), the constant “1” is added to the numerator and denominator of the idf as if an extra
 # document was seen containing every term in the collection exactly once,
