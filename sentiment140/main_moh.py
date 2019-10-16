@@ -7,8 +7,18 @@ import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
 import time
+from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import roc_auc_score, f1_score
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
 
+# Define the models
+models = (LogisticRegression(C = 1, penalty = 'l1', solver = 'liblinear',\
+                multi_class = 'ovr', random_state = 42),)
+models_name = ["LogisticRegression"]
 
+# Load the data
 print("Loading data...")
 start_time = time.time()
 
@@ -68,7 +78,6 @@ def preprocess_tweets(tweet):
     return tweet
 
 
-from sklearn.model_selection import train_test_split
 
 print("Apply train_test_split...")
 start_time = time.time()
@@ -91,36 +100,30 @@ print("preprocess_tweets has completed in {}s!\n".format(time.time() - start_tim
 
 
 
-from sklearn.feature_extraction.text import TfidfVectorizer
-print("Apply TfidfVectorizer...")
+print("Do feature extraction...")
 start_time = time.time()
 vectorizer = TfidfVectorizer(min_df = 75)
 vectorizer.fit(tweets)
 tweets_bow_train = vectorizer.transform(tweets_train)
 tweets_bow_test = vectorizer.transform(tweets_test)
-print("TfidfVectorizer has completed in {}s!\n".format(time.time() - start_time))
+print("Feature extraction has been completed in {}s!\n".format(time.time() - start_time))
 
 
-
-from sklearn.linear_model import LogisticRegression
-print("Apply LogisticRegression...")
-start_time = time.time()
-regressor1 = LogisticRegression(C = 1, penalty = 'l1', solver = 'liblinear',\
-                                multi_class = 'ovr', random_state = 42)
-regressor1.fit(tweets_bow_train, sentiment_train)
-print("LogisticRegression has completed in {}s!\n".format(time.time() - start_time))
-
-
-
-from sklearn.metrics import roc_auc_score, f1_score
-print("Testing code...")
-start_time = time.time()
-pred1 = regressor1.predict(tweets_bow_test)
-pos_prob1 = regressor1.predict_proba(tweets_bow_test)[:, 1]
-auc1 = roc_auc_score(sentiment_test, pos_prob1)
-f11 = f1_score(sentiment_test, pred1, pos_label=4)
-print("Model 1: AUC {} F1 {}".format(auc1, f11))
-print("Testing code has completed in {}s!\n".format(time.time() - start_time))
+print("Create models...")
+for cls_name, clf in zip(models_name, models):
+    print("Training {} ...".format(cls_name))
+    start_time = time.time()
+    clf.fit(tweets_bow_train, sentiment_train)
+    print("Training models has been completed in {}s!\n".format(time.time() - start_time))
+    
+    print("Testing code...")
+    start_time = time.time()
+    pred1 = clf.predict(tweets_bow_test)
+    pos_prob1 = clf.predict_proba(tweets_bow_test)[:, 1]
+    auc1 = roc_auc_score(sentiment_test, pos_prob1)
+    f11 = f1_score(sentiment_test, pred1, pos_label=4)
+    print("Model 1: AUC {} F1 {}".format(auc1, f11))
+    print("Testing code has completed in {}s!\n".format(time.time() - start_time))
 
 
 
