@@ -66,7 +66,7 @@ titles = ('KNN 6',
           'KNN 2',
           'KNN 1')
 
-fig, sub = plt.subplots(3, 2, figsize=(12, 15))
+fig, sub = plt.subplots(2, 2, figsize=(12, 15))
 plt.subplots_adjust(wspace=0.2, hspace=0.4)
 
 X0, X1 = X_train[:, 0], X_train[:, 1]
