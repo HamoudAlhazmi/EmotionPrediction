@@ -4,7 +4,7 @@ In this project, we will build a machine learning model that can extract the hum
 
 ## To do
 
-1- Import libraries
+1- Import libraries<br/>
 2- Define models
 3- Load data
 4- Directly influences the model's performance (Pre-processing)
