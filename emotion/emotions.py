@@ -1,4 +1,5 @@
 '''
+# project aim is to build a machine learning model that can extract the human emotions from text by using sentiment140.
  Tutorial source https://mathpn.github.io/sentiment-classification-twitter-part1/
 '''
 # Import libraries
@@ -17,8 +18,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer # Converts a collection of raw documents to a matrix of TF-IDF features
 import plotly.graph_objects as go
 import itertools
-
-
 
 
 # Define the models
@@ -115,7 +114,6 @@ tweets_bow_test = vectorizer.transform(tweets_test)
 print("Feature extraction has been completed in {}s!\n".format(time.time() - start_time))
 
 
-
 print("Create models...")
 for cls_name, clf, in zip(models_name, models):
     print("Training {} ...".format(cls_name))
@@ -123,7 +121,6 @@ for cls_name, clf, in zip(models_name, models):
     clf.fit(tweets_bow_train, sentiment_train)
     print("Training models has been completed in {}s!\n".format(time.time() - start_time))
 
-#for i in range(1, 5):
     print("Testing code...")
     start_time = time.time()
     pred1 = clf.predict(tweets_bow_test)
@@ -134,45 +131,19 @@ for cls_name, clf, in zip(models_name, models):
     print("Testing code has completed in {}s!\n".format(time.time() - start_time))
 
 
-# unit_costs = ["{}"
-#                   .format(auc1)]
-# costs = ["Model 1: F1 {}"
-#                     .format(itertools.repeat(float(f11(range(4)))))]
-
-# helloworld = [*(auc1)]
-
-# for i in range(float[auc1]):
-
-# dict = {auc1}
-# type(dict)
-line = {auc1}
-type(line)
-#
-# dict[1]
-
 tab = tt.Texttable()
 headings = ['Names','Parameters','AUC','Unit_Costs']
 tab.header(headings)
-
-names = ['bar', 'chocolate', 'chips']
-weights = [0.05, 0.1, 0.25]
-
-#auc1 = roc_auc_score(sentiment_test, pos_prob1)
-
-for row in zip(models,models_name, models_name, line):
+line = {auc1}
+type(line)
+for row in zip(models,models_name, models_name, line): #when i try to print auc1 instead of line i get a TypeError: zip argument #4 must support iteration
         tab.add_row(row)
 
 s = tab.draw()
 print (s)
 
 
-#
-# titles = ('KNN 6',
-#           'KNN 30',
-#           'KNN 4',
-#           'KNN 3',
-#           'KNN 2',
-#           'KNN 1')
+
 #
 # def make_meshgrid(x, y, h=.02):
 #     """Create a mesh of points to plot in
@@ -207,13 +178,13 @@ print (s)
 # X0, X1 = tweets_bow_train[:, 0], tweets_bow_train[:, 1]
 # xx, yy = make_meshgrid(X0, X1)
 #
-# for clf1, title, ax in zip(models, titles, sub.flatten()):
+# for clf1, title, ax in zip(models, models_name, sub.flatten()):
 #     #X_LVQ = clf.weights
 #     #y_LVQ = clf.label_weights
 #     plot_contours(ax, clf1, xx, yy,
 #                   cmap=plt.cm.coolwarm, alpha=0.8)
 #
-#     ax.scatter(X0, X1, c=auc1, cmap=plt.cm.coolwarm, s=20, edgecolors='k')
+#     ax.scatter(X0, X1, c=tweets_bow_train, cmap=plt.cm.coolwarm, s=20, edgecolors='k')
 #
 #     # ax.scatter(X_LVQ[:, 0], X_LVQ[:, 1], c=y_LVQ,
 #     #            cmap=plt.cm.coolwarm, s=50, marker='^', edgecolors='k')
@@ -226,88 +197,3 @@ print (s)
 #     ax.set_yticks(())
 #     ax.set_title(title)
 # plt.show()
-#
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# tab = tt.Texttable()
-# headings = ['Names','Parameters','AUC','Unit_Costs']
-# tab.header(headings)
-# names = ['bar', 'chocolate', 'chips']
-# weights = [0.05, 0.1, 0.25]
-#
-# # unit_costs = [40.0, 50.0, 12.0]
-# # costs = ()
-#
-# for row in zip(models_name,models, unit_costs, costs):
-#     tab.add_row(row)
-#
-# s = tab.draw()
-# print (s)
-
-
-
-
-
-
-# unit_costs = ["Model 1: AUC {blc}" .format(blc=auc1)]
-# unit_costs1 = ["Model 1: AUC {:f}" .format(auc1)]
-# print("Testing code has completed in {}s!\n".format(time.time() - start_time))
-# # costs = ["Model 1: F1 {}"
-# #                     .format(f11)]
-#
-# fig = go.Figure(data=[go.Table(header=dict(values=['Names','Parameters','AUC','F1 score']),
-#                                cells=dict(values=[(models_name), (unit_costs), (unit_costs1)]))
-#                       ])
-# fig.show()
-
-
-
-
-
-
-
-# tab = tt.Texttable()
-# headings = ['Names','Parameters','AUC','F1 score']
-# tab.header(headings)
-# names = ['bar', 'chocolate', 'chips']
-# weights = [0.05, 0.1, 0.25]
-#
-#
-# unit_costs = ["Model 1: AUC {}"
-#                   .format(auc1)]
-# costs = ["Model 1: F1 {}"
-#                     .format(f11)]
-#
-# for row in zip(models_name,models, unit_costs, costs):
-#     #tab.add_rows(["auto"])
-#     tab.add_row(row)
-#     #tab.set_cols_align(["l", "r", "r", "r", "l"])
-#     #tab.add_rows([["text", "float", "exp", "int", "auto"]
-#
-#     s = tab.draw()
-#     print (s)
-# # s = tab.draw()
-# # print (s)
-
-
-
-
