@@ -8,7 +8,7 @@ import pandas as pd # Present data that is suitable for datta analysis via its s
 import numpy as np # It provides a high-performance multidimensional array object
 from matplotlib import pyplot as plt
 import time
-import texttable as tt
+# import texttable as tt
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
@@ -16,23 +16,53 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score, f1_score
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer # Converts a collection of raw documents to a matrix of TF-IDF features
-import plotly.graph_objects as go
+# import plotly.graph_objects as go
 import itertools
+from sklearn.decomposition import TruncatedSVD
+
+
+def make_meshgrid(x, y, h=0.5):
+    """Create a mesh of points to plot in
+
+    Parameters
+
+    x: data to base x-axis meshgrid on
+    y: data to base y-axis meshgrid on
+    h: stepsize for meshgrid, optional
+    Returns
+
+    xx, yy : ndarray
+    """
+    x_min, x_max = x.min() - 1, x.max() + 1
+    y_min, y_max = y.min() - 1, y.max() + 1
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
+                         np.arange(y_min, y_max, h))
+    return xx, yy
+
+
+
+def plot_contours(ax, clf, xx, yy, **params):
+
+    Z = clf.predict(np.c_[xx.ravel(), yy.ravel()])
+    Z = Z.reshape(xx.shape)
+    out = ax.contourf(xx, yy, Z, **params)
+    return out
+
 
 
 # Define the models
-models = (MultinomialNB(alpha=1.0, fit_prior=True),
-          RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1),
+models = (
+          RandomForestClassifier(max_depth=5, n_estimators=10, max_features="auto"),
           DecisionTreeClassifier(max_depth=5),
           LogisticRegression(C = 1, penalty = 'l1', solver = 'liblinear',\
                 multi_class = 'ovr', random_state = 42),)
-models_name = ["MultinomialNB", "RandomForestClassifier", "DecisionTreeClassifier", "LogisticRegression"]
+models_name = ["RandomForestClassifier", "DecisionTreeClassifier", "LogisticRegression"]
 
 # Load the data
 print("Loading data...")
 start_time = time.time() # This function is used to count the number of seconds elapsed since the epoch.
 
-data = pd.read_csv(r"C:\Users\Hamou\OneDrive\المستندات\Term 2 2019 uc\Engineering Project A - 10004\sentiment 140\training.1600000.processed.noemoticon.csv",
+data = pd.read_csv(r"/data/datasets/sentiment140/training.1600000.processed.noemoticon.csv",
                    encoding='ISO-8859-1', header=None)
 
 # data = data[0:800000]
@@ -89,10 +119,12 @@ def preprocess_tweets(tweet):
 
 print("Apply train_test_split...")
 start_time = time.time()
+
 train_data, test_data = train_test_split(data, train_size=0.8, random_state=42)
 print("train_test_split has completed in {}s!\n".format(time.time() - start_time))
 
 print("Apply preprocess_tweets...")
+
 start_time = time.time()
 
 sentiment = np.array(data['sentiment'])
@@ -103,6 +135,8 @@ tweets_train = np.array(train_data['tweet'].apply(preprocess_tweets))
 
 sentiment_test = np.array(test_data['sentiment'])
 tweets_test = np.array(test_data['tweet'].apply(preprocess_tweets))
+
+
 print("preprocess_tweets has completed in {}s!\n".format(time.time() - start_time))
 
 print("Do feature extraction...")
@@ -114,8 +148,23 @@ tweets_bow_test = vectorizer.transform(tweets_test)
 print("Feature extraction has been completed in {}s!\n".format(time.time() - start_time))
 
 
+pca = TruncatedSVD(n_components=2, n_iter=1000, random_state=42)
+pca.fit(tweets_bow_train)
+tweets_bow_train = pca.transform(tweets_bow_train)
+tweets_bow_test = pca.transform(tweets_bow_test)
+
 print("Create models...")
-for cls_name, clf, in zip(models_name, models):
+fig, sub = plt.subplots(1, 3, figsize=(12, 15))
+plt.subplots_adjust(wspace=0.2, hspace=0.4)
+
+print("tweets_bow_train {}".format(tweets_bow_train.shape))
+print("tweets_bow_test {}".format(tweets_bow_test.shape))
+
+X0, X1 = tweets_bow_train[:, 0], tweets_bow_train[:, 1]
+xx, yy = make_meshgrid(X0, X1)
+
+
+for cls_name, clf, ax in zip(models_name, models, sub.flatten()):
     print("Training {} ...".format(cls_name))
     start_time = time.time()
     clf.fit(tweets_bow_train, sentiment_train)
@@ -129,71 +178,21 @@ for cls_name, clf, in zip(models_name, models):
     f11 = f1_score(sentiment_test, pred1, pos_label=4)
     print("Model 1: AUC {} F1 {}".format(auc1, f11))
     print("Testing code has completed in {}s!\n".format(time.time() - start_time))
+    
+    plot_contours(ax, clf, xx, yy, cmap=plt.cm.coolwarm, alpha=0.8)
+    ax.scatter(X0[::1000], X1[::1000], c=sentiment_train[::1000], cmap=plt.cm.coolwarm, s=20, edgecolors='k')
+    
+    
+    ax.set_xlim(xx.min(), xx.max())
+    ax.set_ylim(yy.min(), yy.max())
+    ax.set_xlabel('Sepal length')
+    ax.set_ylabel('Sepal width')
+    ax.set_xticks(())
+    ax.set_yticks(())
+    ax.set_title(cls_name)
 
 
-tab = tt.Texttable()
-headings = ['Names','Parameters','AUC','Unit_Costs']
-tab.header(headings)
-line = {auc1}
-type(line)
-for row in zip(models,models_name, models_name, line): #when i try to print auc1 instead of line i get a TypeError: zip argument #4 must support iteration
-        tab.add_row(row)
-
-s = tab.draw()
-print (s)
+plt.show()
 
 
 
-#
-# def make_meshgrid(x, y, h=.02):
-#     """Create a mesh of points to plot in
-#
-#     Parameters
-#
-#     x: data to base x-axis meshgrid on
-#     y: data to base y-axis meshgrid on
-#     h: stepsize for meshgrid, optional
-#     Returns
-#
-#     xx, yy : ndarray
-#     """
-#     x_min, x_max = x.min() + 1, x.max() - 1
-#     y_min, y_max = y.min() + 1, y.max() - 1
-#     xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
-#                          np.arange(y_min, y_max, h))
-#     return xx, yy
-#
-#
-#
-# def plot_contours(ax, clf1, xx, yy, **params):
-#
-#     Z = clf1.predict(np.c_[xx.ravel(), yy.ravel()])
-#     Z = Z.reshape(xx.shape)
-#     out = ax.contourf(xx, yy, Z, **params)
-#     return out
-#
-# fig, sub = plt.subplots(2, 2, figsize=(12, 15))
-# plt.subplots_adjust(wspace=0.2, hspace=0.4)
-#
-# X0, X1 = tweets_bow_train[:, 0], tweets_bow_train[:, 1]
-# xx, yy = make_meshgrid(X0, X1)
-#
-# for clf1, title, ax in zip(models, models_name, sub.flatten()):
-#     #X_LVQ = clf.weights
-#     #y_LVQ = clf.label_weights
-#     plot_contours(ax, clf1, xx, yy,
-#                   cmap=plt.cm.coolwarm, alpha=0.8)
-#
-#     ax.scatter(X0, X1, c=tweets_bow_train, cmap=plt.cm.coolwarm, s=20, edgecolors='k')
-#
-#     # ax.scatter(X_LVQ[:, 0], X_LVQ[:, 1], c=y_LVQ,
-#     #            cmap=plt.cm.coolwarm, s=50, marker='^', edgecolors='k')
-#
-#     ax.set_xlim(xx.min(), xx.max())
-#     ax.set_ylim(yy.min(), yy.max())
-#     ax.set_xlabel('Sepal length')
-#     ax.set_ylabel('Sepal width')
-#     ax.set_xticks(())
-#     ax.set_yticks(())
-#     ax.set_title(title)
-# plt.show()
