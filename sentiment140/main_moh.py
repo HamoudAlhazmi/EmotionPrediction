@@ -22,7 +22,7 @@ models_name = ["LogisticRegression"]
 print("Loading data...")
 start_time = time.time()
 
-data = pd.read_csv(r"C:\Users\Hamou\OneDrive\المستندات\Term 2 2019 uc\Engineering Project A - 10004\sentiment 140\test.csv",
+data = pd.read_csv(r"C:\Users\Hamou\OneDrive\المستندات\Term 2 2019 uc\Engineering Project A - 10004\sentiment 140\training.1600000.processed.noemoticon.csv",
                    encoding = 'ISO-8859-1', header = None)
 
 # data = data[0:800000]

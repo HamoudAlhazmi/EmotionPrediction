@@ -6,9 +6,9 @@
 import re # Regular Expression
 import pandas as pd # Present data that is suitable for datta analysis via its series and dataframe data structures. it has variety of utilities to perform I/O operations in a seamless manner
 import numpy as np # It provides a high-performance multidimensional array object
-from matplotlib import pyplot as plt
 import time
-import texttable as tt
+import itertools
+from matplotlib import pyplot as plt
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
@@ -16,13 +16,11 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score, f1_score
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer # Converts a collection of raw documents to a matrix of TF-IDF features
-import plotly.graph_objects as go
-import itertools
 
 
 # Define the models
 models = (MultinomialNB(alpha=1.0, fit_prior=True),
-          RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1),
+          RandomForestClassifier(max_depth=5, n_estimators=10, max_features="auto"),
           DecisionTreeClassifier(max_depth=5),
           LogisticRegression(C = 1, penalty = 'l1', solver = 'liblinear',\
                 multi_class = 'ovr', random_state = 42),)
@@ -92,6 +90,9 @@ start_time = time.time()
 train_data, test_data = train_test_split(data, train_size=0.8, random_state=42)
 print("train_test_split has completed in {}s!\n".format(time.time() - start_time))
 
+print("The train_data shape after splitting is {}".format(train_data.shape))
+print("The test_data shape after splitting is {}".format(test_data.shape))
+
 print("Apply preprocess_tweets...")
 start_time = time.time()
 
@@ -129,71 +130,3 @@ for cls_name, clf, in zip(models_name, models):
     f11 = f1_score(sentiment_test, pred1, pos_label=4)
     print("Model 1: AUC {} F1 {}".format(auc1, f11))
     print("Testing code has completed in {}s!\n".format(time.time() - start_time))
-
-
-tab = tt.Texttable()
-headings = ['Names','Parameters','AUC','Unit_Costs']
-tab.header(headings)
-line = {auc1}
-type(line)
-for row in zip(models,models_name, models_name, line): #when i try to print auc1 instead of line i get a TypeError: zip argument #4 must support iteration
-        tab.add_row(row)
-
-s = tab.draw()
-print (s)
-
-
-
-#
-# def make_meshgrid(x, y, h=.02):
-#     """Create a mesh of points to plot in
-#
-#     Parameters
-#
-#     x: data to base x-axis meshgrid on
-#     y: data to base y-axis meshgrid on
-#     h: stepsize for meshgrid, optional
-#     Returns
-#
-#     xx, yy : ndarray
-#     """
-#     x_min, x_max = x.min() + 1, x.max() - 1
-#     y_min, y_max = y.min() + 1, y.max() - 1
-#     xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
-#                          np.arange(y_min, y_max, h))
-#     return xx, yy
-#
-#
-#
-# def plot_contours(ax, clf1, xx, yy, **params):
-#
-#     Z = clf1.predict(np.c_[xx.ravel(), yy.ravel()])
-#     Z = Z.reshape(xx.shape)
-#     out = ax.contourf(xx, yy, Z, **params)
-#     return out
-#
-# fig, sub = plt.subplots(2, 2, figsize=(12, 15))
-# plt.subplots_adjust(wspace=0.2, hspace=0.4)
-#
-# X0, X1 = tweets_bow_train[:, 0], tweets_bow_train[:, 1]
-# xx, yy = make_meshgrid(X0, X1)
-#
-# for clf1, title, ax in zip(models, models_name, sub.flatten()):
-#     #X_LVQ = clf.weights
-#     #y_LVQ = clf.label_weights
-#     plot_contours(ax, clf1, xx, yy,
-#                   cmap=plt.cm.coolwarm, alpha=0.8)
-#
-#     ax.scatter(X0, X1, c=tweets_bow_train, cmap=plt.cm.coolwarm, s=20, edgecolors='k')
-#
-#     # ax.scatter(X_LVQ[:, 0], X_LVQ[:, 1], c=y_LVQ,
-#     #            cmap=plt.cm.coolwarm, s=50, marker='^', edgecolors='k')
-#
-#     ax.set_xlim(xx.min(), xx.max())
-#     ax.set_ylim(yy.min(), yy.max())
-#     ax.set_xlabel('Sepal length')
-#     ax.set_ylabel('Sepal width')
-#     ax.set_xticks(())
-#     ax.set_yticks(())
-#     ax.set_title(title)
-# plt.show()
