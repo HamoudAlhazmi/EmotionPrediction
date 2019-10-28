@@ -4,7 +4,7 @@
 '''
 # Import libraries
 import re # Regular Expression
-import pandas as pd # Present data that is suitable for datta analysis via its series and dataframe data structures. it has variety of utilities to perform I/O operations in a seamless manner
+import pandas as pd # Present data that is suitable for datta analysis via its series and dataframe data structures.
 import numpy as np # It provides a high-performance multidimensional array object
 import time
 import itertools
@@ -15,7 +15,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score, f1_score
 from sklearn.model_selection import train_test_split
-from sklearn.feature_extraction.text import TfidfVectorizer # Converts a collection of raw documents to a matrix of TF-IDF features
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 
 # Define the models
