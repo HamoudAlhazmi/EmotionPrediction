@@ -22,9 +22,9 @@ from sklearn import metrics
 from sklearn.model_selection import GridSearchCV
 
 #set parameters
-vectorizer = TfidfVectorizer()
+vectorizer = TfidfVectorizer(stop_words='english')
 shuffle = True
-remove = ['headers','footers','quotes']
+remove = ['footers','quotes']
 
 line_length = 120
 
