@@ -6,7 +6,9 @@ In this project, we will be dealing with different areas, a) Web development fro
 ## To do
 
 Our project will have two main parts: 
+
 1-	Two machine learning models
+
 2-	Recommender system
 
 The first machine learning model will have: positive and negative classes. The second model will have sub-classes and 20newsgroups will be used as the dataset. The second part of the project is a recommender system. It will recommend news articles to the user based on the text. We will be collecting data ourselves by creating a Google form. 
