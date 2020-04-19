@@ -1,3 +1,7 @@
+#this .py will retrieve the latest news articles using RSS feeds python.
+#the problem is that the model's accuracy is 82 with LinearSVC and we have to increase it to get better predicitons.
+#We have been trying various ways to improve the model's accuracy but with no use.
+#at the end of this please chnage it to your path to export the dataframe in csv.
 import feedparser
 
 #imports numpy and pandas
