@@ -1,12 +1,8 @@
-#this .py will retrieve the latest news articles using RSS feeds python.
-#the problem is that the model's accuracy is 82 with LinearSVC and we have to increase it to get better predicitons.
-#We have been trying various ways to improve the model's accuracy but with no use.
 import feedparser
 
 #imports numpy and pandas
 import numpy as np
 import pandas as pd
-
 import logging
 from time import time
 import sys
@@ -113,66 +109,144 @@ final_model = model_benchmark('LinearSVC',
                               penalty='l2', dual=False,
                               tol=1e-3))
 
-title_list = []
-desc_list = []
-link_list = []
+# The RSS FEED Starts Here
+# I did not change anything above this comment
 
-category_list = [None] * 20
+feed_source = [['http://www.abc.net.au/news/feed/2942460/rss.xml', 'ABC Australia'],
+               ['http://www.9news.com.au/rss', '9NEWS'],
+               ['http://www.dailytelegraph.com.au/feed', 'Daily Telegraph'],
+               ['http://feeds.smh.com.au/rssheadlines/top.xml', 'SMH Australian Breaking News'],
+               ['https://www.news.com.au/feed/', 'News.com.au'],
+               ['https://www.theaustralian.com.au/feed/', 'The Australian RSS Feed']]
 
-title_desc_list = []
-n = 10
+no_of_articles_per_source = 40
 
-def filter_and_store(predicted):
-    for idx, i in enumerate(predicted):
-        if category_list[i] == None:
-            category_list[i] = idx
-    return 0
+df_articles = pd.DataFrame(columns=['Title',
+                                    'Description',
+                                    'Author',
+                                    'Category',
+                                    'Source',
+                                    'Link',
+                                    'Class_Model1',
+                                    'Class_Model2'])
 
-def predict_with_model_2(clf, text):
+df_recommendation_article_by_model2 = pd.DataFrame(columns=['Class_No',
+                                                  'Class_Name',
+                                                  'Article_ID',
+                                                  'Article_Title'])
+
+
+def set_recommendation_Dataframe_model2(df):
+    for i in range(20):
+        df = df.append({'Class_No' : i,
+                        'Class_Name' : newsgroup_train.target_names[i],
+                        'Article_ID' : None,
+                        'Article_Title' : None},
+                       ignore_index=True)
+    return df
+
+def remove_html_variables(text):
+    text = text.replace('<p>', '')
+    text = text.replace('</p>', '')
+    return text
+
+
+def rss_feed_to_dataframe(feed, df, no_of_article, source):
+    for i in range(no_of_article):
+        article_tuple = [None] * 8
+
+        try:
+            article_tuple[0] = remove_html_variables(feed.entries[i].title)
+        except AttributeError as error:
+            article_tuple[0] = None
+        except IndexError as error:
+            break
+
+        try:
+            article_tuple[1] = remove_html_variables(feed.entries[i].description)
+        except AttributeError as error:
+            article_tuple[1] = None
+
+        try:
+            article_tuple[2] = feed.entries[i].author
+        except AttributeError as error:
+            article_tuple[2] = None
+
+        try:
+            article_tuple[3] = feed.entries[i].category
+        except AttributeError as error:
+            article_tuple[3] = None
+
+        article_tuple[4] = source
+
+        try:
+            article_tuple[5] = feed.entries[i].link
+        except AttributeError as error:
+            article_tuple[5] = None
+
+        article_tuple[6] = None
+        article_tuple[7] = None
+
+        df = df.append({'Title': article_tuple[0],
+                        'Description': article_tuple[1],
+                        'Author': article_tuple[2],
+                        'Category': article_tuple[3],
+                        'Source': article_tuple[4],
+                        'Link': article_tuple[5],
+                        'Class_Model1': article_tuple[6],
+                        'Class_Model2': article_tuple[7]},
+                       ignore_index=True)
+
+    return df
+
+
+def rss_feed(feed_source, df, no_of_articles_per_source):
+    for idx, source in enumerate(feed_source):
+        feed = feedparser.parse(source[0])
+        df = rss_feed_to_dataframe(feed, df, no_of_articles_per_source, source[1])
+    return df
+
+
+def article_preprocess_model2(df):
+    length = len(df)
+
+    title_desc_list = [None] * length
+    for i in range(length):
+        title_desc_list[i] = df.iloc[i, 0] + '. ' + df.iloc[i, 1]
+
+    return title_desc_list
+
+
+def predict_article_model2(df, clf):
+    text = article_preprocess_model2(df)
+
     predicted = clf.predict(vectorizer.transform(text))
-
-    #for text, category in zip(text, predicted):
-        #print('%r => %s' % (text, newsgroup_train.target_names[category]))
 
     return predicted
 
-def show_filtered_results():
-    for i in range(20):
-        print_line()
-        print(i)
-        print(newsgroup_train.target_names[i])
-        if category_list[i] == None:
-            print('No article yet.')
-        else:
-            print('Title:      \t%r' % (title_list[category_list[i]]))
-            print('Description:\t%r' % (desc_list[category_list[i]]))
-            print('URL:        \t%r' % (link_list[category_list[i]]))
+def set_recommendation_articles_model2(df_recommendation,df_article):
+    classes_model2 = df_article['Class_Model2'].to_numpy()
+
+    for idx, i in enumerate(classes_model2):
+        if df_recommendation.iloc[i,2] is None:
+            df_recommendation.iloc[i, 2] = idx
+            df_recommendation.iloc[i, 3] = df_article.iloc[idx, 0]
+
+    return df_recommendation
+
+def export_Dataframe_to_csv(df, path, filename):
+    path = path + '\\' + filename
+    df.to_csv(path)
+
+    print('Dataframe exported to ' + path)
     return 0
 
-def rss_feed(feed,n):
-    for i in range(n):
-        title_list.append(feed.entries[i].title)
-        desc_list.append(feed.entries[i].description)
-        link_list.append(feed.entries[i].link)
-        title_desc_list.append(feed.entries[i].title + ". " + feed.entries[i].description)
-    return 0
+df_recommendation_article_by_model2 = set_recommendation_Dataframe_model2(df_recommendation_article_by_model2)
 
-feed = feedparser.parse('http://www.abc.net.au/news/feed/2942460/rss.xml')
-rss_feed(feed,25)
+df_articles = rss_feed(feed_source, df_articles, no_of_articles_per_source)
+df_articles['Class_Model2'] = predict_article_model2(df_articles,final_model)
 
-feed = feedparser.parse('http://www.9news.com.au/rss')
-rss_feed(feed,20)
+df_recommendation_article_by_model2 = set_recommendation_articles_model2(df_recommendation_article_by_model2,df_articles)
 
-feed = feedparser.parse('http://feeds.smh.com.au/rssheadlines/top.xml')
-rss_feed(feed,30)
-
-feed = feedparser.parse('https://www.news.com.au/feed/')
-rss_feed(feed,10)
-
-predicted = predict_with_model_2(final_model,title_desc_list)
-
-filter_and_store(predicted)
-
-show_filtered_results()
-
-
+#export_Dataframe_to_csv(df_articles,*PUT_YOUR_FILEPATH_HERE*,'articles.csv')
+#export_Dataframe_to_csv(df_recommendation_article_by_model2,*PUT_YOUR_FILEPATH_HERE*,'articles_recommendation.csv')
