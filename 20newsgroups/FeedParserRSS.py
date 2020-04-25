@@ -7,30 +7,24 @@ import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.svm import LinearSVC
 
-from sklearn.datasets import fetch_20newsgroups
-
 import pickle
 from joblib import dump, load
 
-path = r'C:\Users\calda\OneDrive\Documents\University\Semester 1 2020\Engineering Project (Part A) 10004\Test Folder'
+#####################################################################################
+#Initial variables
+#####################################################################################
+
+path = r'PUT_YOUR_PATH_HERE'
+
 filename_model2 = 'model2.joblib'
 filename_model2_class_dataframe = 'Model2_Class.csv'
+filename_vectorizer_model2 = 'vectorizer_model2.pickle'
 
 filename_article_database = 'article_database.csv'
 
-vectorizer = TfidfVectorizer(stop_words='english')
-shuffle = True
-remove = ['footers','quotes']
-
-newsgroup_train = fetch_20newsgroups(subset='train',
-                                     shuffle=shuffle,
-                                     remove=remove)
-
-X_train = vectorizer.fit_transform(newsgroup_train.data)
-
-feed_source = [['http://www.abc.net.au/news/feed/2942460/rss.xml', 'ABC Australia'],
+feed_source = [['https://www.abc.net.au/science/news/topic/tech/tech.xml', 'ABC Australia'],
                ['http://www.9news.com.au/rss', '9NEWS'],
-               ['https://www.dailytelegraph.com.au/news/breaking-news/rss', 'Daily Telegraph'],
+               ['http://www.dailytelegraph.com.au/entertainment/sydney-confidential/rss', 'Daily Telegraph'],
                ['http://feeds.smh.com.au/rssheadlines/top.xml', 'SMH Australian Breaking News'],
                ['https://www.news.com.au/feed/', 'News.com.au'],
                ['https://www.theaustralian.com.au/feed/', 'The Australian RSS Feed']]
@@ -46,20 +40,43 @@ df_articles = pd.DataFrame(columns=['Title',
                                     'Class_Model1',
                                     'Class_Model2'])
 
+#####################################################################################
+#Import and export functions
+#####################################################################################
+
 def load_model(path, filename):
     path = path + '\\' + filename
     clf = load(path)
-    print('Loaded %r from %r' % (filename, path))
+    #print('Loaded %r from %r' % (filename, path))
     return clf
 
-def set_recommendation_Dataframe_model2(df):
-    for i in range(20):
-        df = df.append({'Class_No' : i,
-                        'Class_Name' : newsgroup_train.target_names[i],
-                        'Article_ID' : None,
-                        'Article_Title' : None},
-                       ignore_index=True)
+def load_feature_extraction(path, filename):
+    path = path + '\\' + filename
+    vectorizer = load(path)
+    return vectorizer
+
+def export_Dataframe_to_csv(df, path, filename):
+    path = path + '\\' + filename
+    df.to_csv(path, index=False)
+
+    print('Dataframe exported to ' + path)
+    return 0
+
+def import_csv_to_Dataframe(path, filename):
+    path = path + '\\' + filename
+    df = pd.read_csv(path)
+    print('Dataframe imported from ' + path)
     return df
+
+def import_model2_categories(path,filename):
+    df = pd.DataFrame
+    df = import_csv_to_Dataframe(path, filename)
+    df.drop([0,1])
+    return df
+
+#####################################################################################
+#RSS Feed Functions
+#####################################################################################
 
 def remove_html_variables(text):
     text = text.replace('<p>', '')
@@ -139,6 +156,9 @@ def rss_feed(feed_source, df, no_of_articles_per_source):
         print("Stored %i articles from %r source" % (count, source[1]))
     return df
 
+#####################################################################################
+#RSS Feed Functions
+#####################################################################################
 
 def article_preprocess_model2(df):
     length = len(df)
@@ -168,34 +188,19 @@ def set_recommendation_articles_model2(df_recommendation,df_article):
 
     return df_recommendation
 
-def export_Dataframe_to_csv(df, path, filename):
-    path = path + '\\' + filename
-    df.to_csv(path, index=False)
+#####################################################################################
+#Run the entire code
+#####################################################################################
 
-    print('Dataframe exported to ' + path)
-    return 0
+def main(df_articles):
+    df_recommendation_article_by_model2 = import_model2_categories(path, filename_model2_class_dataframe)
 
-def import_csv_to_Dataframe(path, filename):
-    path = path + '\\' + filename
-    df = pd.read_csv(path)
-    print('Dataframe imported from ' + path)
-    return df
+    df_articles = rss_feed(feed_source, df_articles, no_of_articles_per_source)
+    df_articles['Class_Model2'] = predict_article_model2(df_articles, load_model(path, filename_model2), load_feature_extraction(path,filename_vectorizer_model2))
 
-def import_model2_categories(path,filename):
-    df = pd.DataFrame
-    df = import_csv_to_Dataframe(path, filename)
-    df.drop([0,1])
-    return df
+    df_recommendation_article_by_model2 = set_recommendation_articles_model2(df_recommendation_article_by_model2,
+                                                                             df_articles)
+    export_Dataframe_to_csv(df_articles, path, filename_article_database)
+    export_Dataframe_to_csv(df_recommendation_article_by_model2, path, filename_model2_class_dataframe)
 
-df_recommendation_article_by_model2 = import_model2_categories(path, filename_model2_class_dataframe)
-
-df_articles = rss_feed(feed_source, df_articles, no_of_articles_per_source)
-df_articles['Class_Model2'] = predict_article_model2(df_articles,load_model(path, filename_model2), vectorizer)
-
-df_recommendation_article_by_model2 = set_recommendation_articles_model2(df_recommendation_article_by_model2,df_articles)
-
-print(df_recommendation_article_by_model2.head(2))
-#print(df_recommendation_article_by_model2.info())
-
-export_Dataframe_to_csv(df_articles,path,filename_article_database)
-export_Dataframe_to_csv(df_recommendation_article_by_model2,path,filename_model2_class_dataframe)
+main(df_articles)
