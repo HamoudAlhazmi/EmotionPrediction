@@ -1,3 +1,5 @@
+from Global import Global
+
 import feedparser
 
 import math
@@ -14,20 +16,13 @@ from joblib import dump, load
 #Initial variables
 #####################################################################################
 
-path = r'PUT_YOUR_PATH_HERE'
-
-filename_model2 = 'model2.joblib'
-filename_model2_class_dataframe = 'Model2_Class.csv'
-filename_vectorizer_model2 = 'vectorizer_model2.pickle'
-
-filename_article_database = 'article_database.csv'
+const = Global()
 
 feed_source = [['https://www.abc.net.au/science/news/topic/tech/tech.xml', 'ABC Australia'],
                ['http://www.9news.com.au/rss', '9NEWS'],
                ['http://www.dailytelegraph.com.au/entertainment/sydney-confidential/rss', 'Daily Telegraph'],
                ['http://feeds.smh.com.au/rssheadlines/top.xml', 'SMH Australian Breaking News'],
-               ['https://www.news.com.au/feed/', 'News.com.au'],
-               ['https://www.theaustralian.com.au/feed/', 'The Australian RSS Feed']]
+               ['https://www.news.com.au/feed/', 'News.com.au']]
 
 no_of_articles_per_source = 40
 
@@ -39,6 +34,10 @@ df_articles = pd.DataFrame(columns=['Title',
                                     'Link',
                                     'Class_Model1',
                                     'Class_Model2'])
+
+df_recommendation = pd.DataFrame(columns=['Class_Model1',
+                                          'Class_Model2',
+                                          'Article_ID'])
 
 #####################################################################################
 #Import and export functions
@@ -157,10 +156,10 @@ def rss_feed(feed_source, df, no_of_articles_per_source):
     return df
 
 #####################################################################################
-#RSS Feed Functions
+#Predict Functions
 #####################################################################################
 
-def article_preprocess_model2(df):
+def article_preprocess(df):
     length = len(df)
 
     title_desc_list = [None] * length
@@ -170,8 +169,8 @@ def article_preprocess_model2(df):
     return title_desc_list
 
 
-def predict_article_model2(df, clf, vectorizer):
-    text = article_preprocess_model2(df)
+def predict_article(df, clf, vectorizer):
+    text = article_preprocess(df)
 
     vectors = vectorizer.transform(text)
     predicted = clf.predict(vectors)
@@ -188,19 +187,50 @@ def set_recommendation_articles_model2(df_recommendation,df_article):
 
     return df_recommendation
 
+
+def set_recommendation_df(df_recommendation, df_article):
+
+    #print(df_article.info())
+
+    for i in range(20):
+        for j in [0, 4]:
+            df_temp = df_article[df_article.Class_Model2 == i]
+            df_temp = df_temp[df_temp.Class_Model1 == j]
+
+            try:
+                df_recommendation = df_recommendation.append({'Class_Model1': j,
+                                                              'Class_Model2': i,
+                                                              'Article_ID': df_temp.index[0]},
+                                                             ignore_index=True)
+            except IndexError as error:
+                df_recommendation = df_recommendation.append({'Class_Model1': j,
+                                                              'Class_Model2': i,
+                                                              'Article_ID': None},
+                                                             ignore_index=True)
+    return df_recommendation
+
 #####################################################################################
 #Run the entire code
 #####################################################################################
 
-def main(df_articles):
-    df_recommendation_article_by_model2 = import_model2_categories(path, filename_model2_class_dataframe)
+def main(df_articles, df_recommendation):
+    df_recommendation_article_by_model2 = import_model2_categories(const.path, const.filename_model2_class_dataframe)
 
     df_articles = rss_feed(feed_source, df_articles, no_of_articles_per_source)
-    df_articles['Class_Model2'] = predict_article_model2(df_articles, load_model(path, filename_model2), load_feature_extraction(path,filename_vectorizer_model2))
+
+    df_articles['Class_Model1'] = predict_article(df_articles, load_model(const.path, const.filename_model1),
+                                                  load_feature_extraction(const.path, const.filename_vectorizer_model1))
+
+    df_articles['Class_Model2'] = predict_article(df_articles, load_model(const.path, const.filename_model2),
+                                                  load_feature_extraction(const.path, const.filename_vectorizer_model2))
 
     df_recommendation_article_by_model2 = set_recommendation_articles_model2(df_recommendation_article_by_model2,
                                                                              df_articles)
-    export_Dataframe_to_csv(df_articles, path, filename_article_database)
-    export_Dataframe_to_csv(df_recommendation_article_by_model2, path, filename_model2_class_dataframe)
 
-main(df_articles)
+    df_recommendation = set_recommendation_df(df_recommendation, df_articles)
+
+    export_Dataframe_to_csv(df_articles, const.path, const.filename_article_database)
+    export_Dataframe_to_csv(df_recommendation_article_by_model2, const.path, const.filename_model2_class_dataframe)
+    export_Dataframe_to_csv(df_recommendation, const.path, const.filename_article_recommendation)
+
+main(df_articles, df_recommendation)

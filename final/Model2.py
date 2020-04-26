@@ -1,3 +1,5 @@
+from Global import Global
+
 import pandas as pd
 import numpy as np
 
@@ -23,7 +25,7 @@ vectorizer = TfidfVectorizer(stop_words='english')
 shuffle = True
 remove = ['footers','quotes']
 
-path = r'PUT_YOUR_PATH_HERE'
+const = Global()
 
 #####################################################################################
 #Set up the datasets and feature extraction
@@ -73,18 +75,24 @@ del model2_results
 #Functions to print and write logs
 #####################################################################################
 
-filename_model2_logs = 'model2_logs.txt'
 model_name = 'Linear SVC'
 
 def write_model_classification(text_clf, file):
-    file.write("Model name:\r%s\n" % model_name)
+    file.write("Model name:\t%s\n" % model_name)
+    file.write("\n")
+
     file.write("Model specification:\n")
     file.write(str(text_clf))
+    file.write("\n")
+
     file.write("Train time: %0.3fs\n" % train_time)
     file.write("Test time:  %0.3fs\n" % test_time)
+    file.write("\n")
+
     file.write("Classification Report:\n")
     file.write(metrics.classification_report(newsgroup_test.target, test_pred,
                                              target_names=newsgroup_test.target_names))
+    file.write("\n")
 
 def write_top_10_keywords(text_clf, vectorizer, categories, file):
     feature_names = vectorizer.get_feature_names()
@@ -104,9 +112,6 @@ def write_to_file(path, filename_model2_logs):
 # Store the model and feature extraction
 #####################################################################################
 
-filename_model2 = 'model2.joblib'
-filename_vectorizer_model2 = 'vectorizer_model2.pickle'
-
 def store_clf(clf, path, filename):
     path = path + '\\' + filename
     dump(clf, path)
@@ -123,8 +128,6 @@ def store_model2_and_vectorizer(clf, vectorizer, path, filename_model2, filename
 #####################################################################################
 # Create and store categories csv
 #####################################################################################
-
-filename_model2_class_dataframe = 'Model2_Class.csv'
 
 df_recommendation_article_by_model2 = pd.DataFrame(columns=['Class_No',
                                                             'Class_Name',
@@ -156,8 +159,8 @@ def process_Dataframe(df, path, filename):
 #####################################################################################
 
 def main():
-    write_to_file(path,filename_model2_logs)
-    store_model2_and_vectorizer(model2,vectorizer,path,filename_model2,filename_vectorizer_model2)
-    process_Dataframe(df_recommendation_article_by_model2, path, filename_model2_class_dataframe)
+    write_to_file(const.path,const.filename_model2_logs)
+    store_model2_and_vectorizer(model2,vectorizer,const.path,const.filename_model2,const.filename_vectorizer_model2)
+    process_Dataframe(df_recommendation_article_by_model2, const.path, const.filename_model2_class_dataframe)
 
 main()
