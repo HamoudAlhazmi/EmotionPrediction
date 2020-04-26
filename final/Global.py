@@ -1,7 +1,7 @@
 class Global:
 
     def __init__(self):
-        self.path = r'C:\Users\calda\OneDrive\Documents\University\Semester 1 2020\Engineering Project (Part A) 10004\Project'
+        self.path = r'PUT_YOUR_PATH_HERE'
 
         self.filename_model1 = 'model1.joblib'
         self.filename_model2 = 'model2.joblib'
