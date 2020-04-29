@@ -6,8 +6,7 @@ import math
 import numpy as np
 import pandas as pd
 
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.svm import LinearSVC
+import re
 
 import pickle
 from joblib import dump, load
@@ -18,10 +17,10 @@ from joblib import dump, load
 
 const = Global()
 
-feed_source = [['https://www.abc.net.au/science/news/topic/tech/tech.xml', 'ABC Australia'],
+feed_source = [['https://www.abc.net.au/science/news/topic/tech/tech.xml', 'ABC Australia', 7],
                ['http://www.9news.com.au/rss', '9NEWS'],
                ['http://www.dailytelegraph.com.au/entertainment/sydney-confidential/rss', 'Daily Telegraph'],
-               ['http://feeds.smh.com.au/rssheadlines/top.xml', 'SMH Australian Breaking News'],
+               ['http://feeds.smh.com.au/rssheadlines/top.xml', 'SMH Australian Breaking News', 13],
                ['https://www.news.com.au/feed/', 'News.com.au']]
 
 no_of_articles_per_source = 40
@@ -77,9 +76,11 @@ def import_model2_categories(path,filename):
 #RSS Feed Functions
 #####################################################################################
 
-def remove_html_variables(text):
-    text = text.replace('<p>', '')
-    text = text.replace('</p>', '')
+def process_text(text):
+    text = re.sub('<[^<]+?>', '', text)
+    text = re.sub(r"[^a-zA-Z0-9]+", ' ', text)
+    text = re.sub('((www\.[^\s]+)|(https?://[^\s]+))', '<URL> ', text)
+
     return text
 
 
@@ -89,14 +90,14 @@ def rss_feed_to_dataframe(feed, df, no_of_article, source):
         article_tuple = [None] * 8
 
         try:
-            article_tuple[0] = remove_html_variables(feed.entries[i].title)
+            article_tuple[0] = process_text(feed.entries[i].title)
         except AttributeError as error:
             article_tuple[0] = None
         except IndexError as error:
             break
 
         try:
-            article_tuple[1] = remove_html_variables(feed.entries[i].description)
+            article_tuple[1] = process_text(feed.entries[i].description)
         except AttributeError as error:
             article_tuple[1] = None
 
@@ -188,16 +189,33 @@ def set_recommendation_articles_model2(df_recommendation,df_article):
     return df_recommendation
 
 
-def set_recommendation_df(df_recommendation, df_article):
+def set_recommendation_df(df_recommendation, df_article, feed_source):
 
     #print(df_article.info())
 
     for i in range(20):
+        priority = False
+        source = ''
+
+        for idx, sourceinfo in enumerate(feed_source):
+            try:
+                #print(str(i) + ' ' + str(sourceinfo[2]))
+                if i == sourceinfo[2]:
+                    source = sourceinfo[1]
+                    priority = True
+                    #print(source + ' ' + str(sourceinfo[2]))
+            except IndexError as error:
+                priority = priority
+
         for j in [0, 4]:
             df_temp = df_article[df_article.Class_Model2 == i]
             df_temp = df_temp[df_temp.Class_Model1 == j]
 
             try:
+                if priority:
+                    if source in df_temp['Source'].values:
+                        df_temp = df_temp[df_temp.Source == source]
+
                 df_recommendation = df_recommendation.append({'Class_Model1': j,
                                                               'Class_Model2': i,
                                                               'Article_ID': df_temp.index[0]},
@@ -227,7 +245,7 @@ def main(df_articles, df_recommendation):
     df_recommendation_article_by_model2 = set_recommendation_articles_model2(df_recommendation_article_by_model2,
                                                                              df_articles)
 
-    df_recommendation = set_recommendation_df(df_recommendation, df_articles)
+    df_recommendation = set_recommendation_df(df_recommendation, df_articles, feed_source)
 
     export_Dataframe_to_csv(df_articles, const.path, const.filename_article_database)
     export_Dataframe_to_csv(df_recommendation_article_by_model2, const.path, const.filename_model2_class_dataframe)
