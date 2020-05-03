@@ -17,10 +17,10 @@ from joblib import dump, load
 
 const = Global()
 
-feed_source = [['https://www.abc.net.au/science/news/topic/tech/tech.xml', 'ABC Australia', 7],
-               ['http://www.9news.com.au/rss', '9NEWS'],
+feed_source = [['https://www.abc.net.au/science/news/topic/tech/tech.xml', 'ABC Australia', [7]],
+               ['http://www.9news.com.au/rss', '9NEWS', [7, 13]],
                ['http://www.dailytelegraph.com.au/entertainment/sydney-confidential/rss', 'Daily Telegraph'],
-               ['http://feeds.smh.com.au/rssheadlines/top.xml', 'SMH Australian Breaking News', 13],
+               ['http://feeds.smh.com.au/rssheadlines/top.xml', 'SMH Australian Breaking News', [5, 13]],
                ['https://www.news.com.au/feed/', 'News.com.au']]
 
 no_of_articles_per_source = 40
@@ -188,22 +188,20 @@ def set_recommendation_articles_model2(df_recommendation,df_article):
 
     return df_recommendation
 
-
 def set_recommendation_df(df_recommendation, df_article, feed_source):
 
     #print(df_article.info())
 
     for i in range(20):
         priority = False
-        source = ''
+        source = []
 
         for idx, sourceinfo in enumerate(feed_source):
             try:
                 #print(str(i) + ' ' + str(sourceinfo[2]))
-                if i == sourceinfo[2]:
-                    source = sourceinfo[1]
+                if i in sourceinfo[2]:
+                    source.append(sourceinfo[1])
                     priority = True
-                    #print(source + ' ' + str(sourceinfo[2]))
             except IndexError as error:
                 priority = priority
 
@@ -212,13 +210,19 @@ def set_recommendation_df(df_recommendation, df_article, feed_source):
             df_temp = df_temp[df_temp.Class_Model1 == j]
 
             try:
+                df_final_recommendation =  pd.DataFrame()
                 if priority:
-                    if source in df_temp['Source'].values:
-                        df_temp = df_temp[df_temp.Source == source]
+                    for source_name in source:
+                        if source_name in df_temp['Source'].values:
+                            df_final_recommendation = df_final_recommendation.append(df_temp[df_temp.Source == source_name])
+
+
+                if df_final_recommendation.empty:
+                    df_final_recommendation = df_temp
 
                 df_recommendation = df_recommendation.append({'Class_Model1': j,
                                                               'Class_Model2': i,
-                                                              'Article_ID': df_temp.index[0]},
+                                                              'Article_ID': df_final_recommendation.index[0]},
                                                              ignore_index=True)
             except IndexError as error:
                 df_recommendation = df_recommendation.append({'Class_Model1': j,
