@@ -17,11 +17,29 @@ from joblib import dump, load
 
 const = Global()
 
-feed_source = [['https://www.abc.net.au/science/news/topic/tech/tech.xml', 'ABC Australia', [7]],
-               ['http://www.9news.com.au/rss', '9NEWS', [7, 13]],
-               ['http://www.dailytelegraph.com.au/entertainment/sydney-confidential/rss', 'Daily Telegraph'],
-               ['http://feeds.smh.com.au/rssheadlines/top.xml', 'SMH Australian Breaking News', [5, 13]],
-               ['https://www.news.com.au/feed/', 'News.com.au']]
+feed_source = [['https://www.theahafoundation.org/feed/', 'The Aha foundation', [0]],  #alt.atheism
+               ['http://feeds.windowscentral.com/wmexperts', 'Windows Central', [2, 5]],  #comp.os.ms-windows.misc and comp.windows.x
+               ['http://blogs.windows.com/feed/', 'Microsoft Windows Blog', [2, 5]],  # comp.os.ms-windows.misc and comp.windows.x
+               ['https://osxdaily.com/category/mac-os-x/feed/', 'Mac OS X Daily', [4]],  #comp.sys.mac.hardware
+               ['https://developer.apple.com/news/rss/news.rss', 'Apple', [4]],  #comp.sys.mac.hardware
+               ['https://cacm.acm.org/browse-by-subject/hardware.rss', 'Communications of the ACM', [3, 4]],  #hardware
+               ['https://feeds.megaphone.fm/vergecast', 'The Verge', [1, 2, 3, 4, 5]],  #comp
+               ['http://feeds.feedburner.com/TechCrunch/', 'TechCrunch', [1, 2, 3, 4, 5]],  #comp
+               ['http://news.mit.edu/rss/topic/science-technology-and-society', 'MIT News - Science, Technology, and Society', [1, 2, 3, 4, 5]],  #comp
+               ['https://australia.businessesforsale.com/australian/search/miscellaneous-construction-businesses-for-sale-in-ontario.rss',
+                'BusinessForSale', [6]],  #misc.forsale
+               ['https://repository.upenn.edu/miscellaneous_papers/recent.rss',
+                'Penn Libraries University of Pennsylvania', [6]],  #misc.forsale
+               ['https://www.goauto.com.au/rss/car-reviews/1.xml', 'GoAuto', [7]],  #rec.autos
+               ['https://www.automotiveaddicts.com/feed', 'Automotive Addicts', [7]],  #rec.autos
+               ['https://www.motorcyclistonline.com/rss.xml?loc=footer&lnk=rss', 'Motorcyclist | Motorcycle News', [8]],  #rec.motorcycles
+               ['http://feeds.feedburner.com/MotorAuthority2', 'Motor Authority', [8]],  #rec.motorcycles
+               ['https://www.hotbikeweb.com/rss.xml?loc=footer&lnk=rss', 'Hot Bike Magazine', [8]],  #rec.motorcycles
+               ['https://blogs.fangraphs.com/feed/', 'FanGraphs Baseball', [9]],  #rec.sport.baseball
+               ['https://thehockeynews.com/section/news/feed', 'The Hockey News', [10]],  #rec.sport.hockey
+               ['http://www.sportingnews.com/us/rss', 'Sporting News', [7, 8, 9, 10]],  #rec.sport
+               ['https://www.skysports.com/rss/12040', 'Sky Sports', [7, 8, 9, 10]],  #rec.sport
+               ['https://www.sportskeeda.com/feed', 'SportsKeeda', [7, 8, 9, 10]]]  #rec.sport
 
 no_of_articles_per_source = 40
 
