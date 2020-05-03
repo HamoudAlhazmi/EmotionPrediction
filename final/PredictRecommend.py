@@ -28,11 +28,12 @@ def import_csv_to_Dataframe(path, filename):
     df = pd.read_csv(path)
     return df
 
-def get_recommendation(predicted, path, filename_categories, filename_article_database):
+def get_recommendation(class1, class2, path, filename_categories, filename_article_database):
     df_categories = import_csv_to_Dataframe(path, filename_categories)
     df_database = import_csv_to_Dataframe(path, filename_article_database)
 
-    article_id = df_categories.iloc[predicted, 2]
+    df_temp = df_categories.loc[(df_categories['Class_Model1'] == class1) & (df_categories['Class_Model2'] == class2)]
+    article_id = df_temp.iloc[0, 2]
     try:
         recommendation_article = df_database.iloc[int(article_id)].to_numpy()
     except ValueError as error:
@@ -47,7 +48,7 @@ class Sentiment:
         self.class_model1 = predict(sentiment, const.path, const.filename_model1, const.filename_vectorizer_model1)
         self.class_model2 = predict(sentiment, const.path, const.filename_model2, const.filename_vectorizer_model2)
 
-        recommendation_article = get_recommendation(self.class_model2, const.path, const.filename_article_recommendation, const.filename_article_database)
+        recommendation_article = get_recommendation(self.class_model1, self.class_model2, const.path, const.filename_article_recommendation, const.filename_article_database)
 
         self.title = recommendation_article[0]
         self.description = recommendation_article[1]
