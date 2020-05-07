@@ -15,7 +15,7 @@ Our project will have three main parts:
 
 The first machine learning model will have: positive and negative classes. The second model will have sub-classes and 20newsgroups will be used as the dataset. The second part of the project is a recommender system. It will recommend news articles to the user based on the user input. Finally, we will design a webpage using and connect them all using Django which is a high-level Python-based free and open-source web framework.
 
-# System Model
+## System Model
 
 ![System Model AI](https://user-images.githubusercontent.com/56243454/81346353-7b6ba800-90fd-11ea-8837-ac5c16d8c058.png)
 
