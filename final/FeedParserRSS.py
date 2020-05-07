@@ -39,7 +39,12 @@ feed_source = [['https://www.theahafoundation.org/feed/', 'The Aha foundation', 
                ['https://thehockeynews.com/section/news/feed', 'The Hockey News', [10]],  #rec.sport.hockey
                ['http://www.sportingnews.com/us/rss', 'Sporting News', [7, 8, 9, 10]],  #rec.sport
                ['https://www.skysports.com/rss/12040', 'Sky Sports', [7, 8, 9, 10]],  #rec.sport
-               ['https://www.sportskeeda.com/feed', 'SportsKeeda', [7, 8, 9, 10]]]  #rec.sport
+               ['https://www.sportskeeda.com/feed', 'SportsKeeda', [7, 8, 9, 10]],
+               ['https://www.abc.net.au/science/news/topic/tech/tech.xml', 'ABC Australia', [7]],
+               ['http://www.9news.com.au/rss', '9NEWS', [7, 13]],
+               ['http://www.dailytelegraph.com.au/entertainment/sydney-confidential/rss', 'Daily Telegraph'],
+               ['http://feeds.smh.com.au/rssheadlines/top.xml', 'SMH Australian Breaking News', [5, 13]],
+               ['https://www.news.com.au/feed/', 'News.com.au']]
 
 no_of_articles_per_source = 40
 
@@ -183,7 +188,7 @@ def article_preprocess(df):
 
     title_desc_list = [None] * length
     for i in range(length):
-        title_desc_list[i] = df.iloc[i, 0] + '. ' + df.iloc[i, 1]
+        title_desc_list[i] = str(df.iloc[i, 0]) + '. ' + str(df.iloc[i, 1])
 
     return title_desc_list
 
