@@ -23,7 +23,7 @@ As the system model depicts that when the user input any text it will go directl
 
 ![article_recommendation](https://user-images.githubusercontent.com/56243454/81346553-ceddf600-90fd-11ea-8bf2-29b9a8008ad9.png)
 
-Finally, the user will see the output on the website. The user will see:
+Finally, the user will see these outputs on the website:
 
 1- Title 
 
