@@ -15,5 +15,6 @@ The first machine learning model will have: positive and negative classes. The s
 
 ## System Model
 
+![System Model AI](https://user-images.githubusercontent.com/56243454/81346353-7b6ba800-90fd-11ea-8837-ac5c16d8c058.png)
 
 
