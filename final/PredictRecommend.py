@@ -1,4 +1,6 @@
 from Global import Global
+from Global import Model1
+from Global import Model2
 
 import feedparser
 
@@ -45,10 +47,13 @@ class Sentiment:
 
     def __init__(self, sentiment):
         self.sentiment = sentiment
-        self.class_model1 = predict(sentiment, const.path, const.filename_model1, const.filename_vectorizer_model1)
-        self.class_model2 = predict(sentiment, const.path, const.filename_model2, const.filename_vectorizer_model2)
+        self.class_model1 = Model1(predict(sentiment, const.path, const.filename_model1, const.filename_vectorizer_model1))
+        self.class_model2 = Model2(predict(sentiment, const.path, const.filename_model2, const.filename_vectorizer_model2))
 
-        recommendation_article = get_recommendation(self.class_model1, self.class_model2, const.path, const.filename_article_recommendation, const.filename_article_database)
+        self.tag_model1 = self.class_model1.tag
+        self.tag_model2 = self.class_model2.tag
+
+        recommendation_article = get_recommendation(self.class_model1.modelclass, self.class_model2.modelclass, const.path, const.filename_article_recommendation, const.filename_article_database)
 
         self.title = recommendation_article[0]
         self.description = recommendation_article[1]
