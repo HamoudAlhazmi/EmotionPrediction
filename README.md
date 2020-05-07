@@ -17,4 +17,6 @@ The first machine learning model will have: positive and negative classes. The s
 
 ![System Model AI](https://user-images.githubusercontent.com/56243454/81346353-7b6ba800-90fd-11ea-8837-ac5c16d8c058.png)
 
+As the system model depicts that when the user input any text it will go directly to Django (back-end). Then the back-end is connected to both models 1 and 2. Model 1 uses Sentiment140 as the dataset which has sentiment classes (positive or negative) and Model 2 uses 20newsgroups as the dataset and it has different 20 topics. After that, Set recommendation is a function in python will help retrieving all articles from rss feeds links and retrieve both machine learning models to the system and apply it to the database so we can predict the user input based on the sentiment and topic to recommend the new article. After predicting all articles, we create a recommendation database (Article Recommendation) consistes of (Class_Model1, Class_Model2 and Article_ID). Therefore, as the fourth row below in article_recommendation shows that if Model 1 and 2 classify the user input as sentiment 0 for model 1 and topic 1 for model 2 then article number 51 is recommended. Finally, the user will see the output on the website. The user will see: title, description, source and link of the article.
+
 
