@@ -33,6 +33,14 @@ Finally, the user will see these outputs on the website:
 
 4- Article link.
 
+## Web page design
+
+![fullwebsite screenshot](https://user-images.githubusercontent.com/56243454/81629332-3f5e7d00-9446-11ea-8466-185b7cc3c571.png)
+
+When the user input is "I do not like robots", here is the output:
+
+![i do not like robots](https://user-images.githubusercontent.com/56243454/81629363-4f765c80-9446-11ea-9ef8-30b204a5a5bc.png)
+
 
 
 
