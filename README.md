@@ -37,9 +37,10 @@ Finally, the user will see these outputs on the website:
 
 ![fullwebsite screenshot](https://user-images.githubusercontent.com/56243454/81629332-3f5e7d00-9446-11ea-8466-185b7cc3c571.png)
 
-When the user input is "I do not like robots", here is the output:
+When the user input is "I do not like robots", then the output will be about an article in relation to robots as shown below:
 
-![i do not like robots](https://user-images.githubusercontent.com/56243454/81629363-4f765c80-9446-11ea-9ef8-30b204a5a5bc.png)
+![I don't like Robots](https://user-images.githubusercontent.com/56243454/81629729-2d310e80-9447-11ea-9087-155ad038d880.png)
+
 
 
 
