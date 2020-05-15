@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from home.PredictRecommend import *
-from .test1 import car
+
 
 
 from .models import Post, Recommendation
